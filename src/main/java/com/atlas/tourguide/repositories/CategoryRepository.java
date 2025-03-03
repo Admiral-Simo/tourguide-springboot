@@ -13,5 +13,5 @@ import com.atlas.tourguide.domain.entities.Category;
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @Query("SELECT c FROM Category c LEFT JOIN FETCH c.posts")
     List<Category> findAllWithPostCount();
-
+    boolean existsByNameIgnoreCase(String name);
 }

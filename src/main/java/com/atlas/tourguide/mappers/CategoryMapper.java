@@ -9,6 +9,7 @@ import org.mapstruct.ReportingPolicy;
 
 import com.atlas.tourguide.domain.PostStatus;
 import com.atlas.tourguide.domain.dtos.CategoryDto;
+import com.atlas.tourguide.domain.dtos.CreateCategoryRequest;
 import com.atlas.tourguide.domain.entities.Category;
 import com.atlas.tourguide.domain.entities.Post;
 
@@ -16,6 +17,8 @@ import com.atlas.tourguide.domain.entities.Post;
 public interface CategoryMapper {
 	@Mapping(target = "postCount", source = "posts", qualifiedByName = "calculatePostCount")
 	CategoryDto toDto(Category category);
+	
+	Category toEntity(CreateCategoryRequest createCategoryRequest);
 	
 	@Named("calculatePostCount")
 	default long calculatePostCount(List<Post> posts) {
