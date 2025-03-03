@@ -19,13 +19,13 @@ public class ErrorController {
 	public ResponseEntity<ApiErrorResponse> handleException(Exception ex) {
 		ApiErrorResponse error = ApiErrorResponse.builder()
 				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-				.message("An unexpected error occured")
+				.message(ex.getMessage())
 				.build();
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
 				error
 		);
 	}
-	
+
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
 		ApiErrorResponse error = ApiErrorResponse.builder()
@@ -37,7 +37,7 @@ public class ErrorController {
 				error
 		);
 	}
-	
+
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<ApiErrorResponse> handleIllegalStateException(IllegalStateException ex) {
 		ApiErrorResponse error = ApiErrorResponse.builder()
@@ -49,9 +49,9 @@ public class ErrorController {
 				error
 		);
 	}
-	
+
 	@ExceptionHandler(BadCredentialsException.class)
-	public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(IllegalStateException ex) {
+	public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
 		ApiErrorResponse error = ApiErrorResponse.builder()
 				.status(HttpStatus.UNAUTHORIZED.value())
 				.message("Incorrect username or password.")
