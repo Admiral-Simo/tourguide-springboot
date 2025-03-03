@@ -2,6 +2,7 @@ package com.atlas.tourguide.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +46,18 @@ public class ErrorController {
 				.build();
 
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(
+				error
+		);
+	}
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ApiErrorResponse> handleBadCredentialsException(IllegalStateException ex) {
+		ApiErrorResponse error = ApiErrorResponse.builder()
+				.status(HttpStatus.UNAUTHORIZED.value())
+				.message("Incorrect username or password.")
+				.build();
+
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
 				error
 		);
 	}
