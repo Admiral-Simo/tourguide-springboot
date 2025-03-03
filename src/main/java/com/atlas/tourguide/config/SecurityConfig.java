@@ -23,7 +23,7 @@ public class SecurityConfig {
 	JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationService authenticationService) {
 		return new JwtAuthenticationFilter(authenticationService);
 	}
-	
+
 	@Bean
 	UserDetailsService userDetailsService(UserRepository userRepositoryi) {
 		return new BlogUserDetailsService(userRepositoryi);
@@ -33,7 +33,8 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
 		http
 			.authorizeHttpRequests(auth -> auth
-					.requestMatchers(HttpMethod.POST, "/api/v1/auth").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
 					.requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
 					.requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
 					.requestMatchers(HttpMethod.GET, "/api/v1/tags/**").permitAll()
@@ -43,10 +44,10 @@ public class SecurityConfig {
 			.sessionManagement(session ->
 					session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-		
+
 		return http.build();
 	}
-	
+
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
