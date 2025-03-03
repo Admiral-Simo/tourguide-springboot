@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.atlas.tourguide.domain.dtos.AuthResponse;
 import com.atlas.tourguide.domain.dtos.LoginRequest;
+import com.atlas.tourguide.domain.dtos.SignupRequest;
 import com.atlas.tourguide.services.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,26 @@ import lombok.RequiredArgsConstructor;
 public class AuthController {
 	private final AuthenticationService authenticationService;
 	
-	@PostMapping
+	@PostMapping("/login")
 	public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
 		UserDetails userDetails = authenticationService.authenticate(
 				loginRequest.getEmail(),
 				loginRequest.getPassword()
+		);
+		String tokenString = authenticationService.generateToken(userDetails);
+		AuthResponse authResponse = AuthResponse.builder()
+			.token(tokenString)
+			.expiresIn(86400)
+			.build();
+		return ResponseEntity.ok(authResponse);
+	}
+	
+	@PostMapping("/signup")
+	public ResponseEntity<AuthResponse> signup(@RequestBody SignupRequest signupRequest) {
+		authenticationService.createUser(signupRequest.getEmail(), signupRequest.getPassword(), signupRequest.getName());
+		UserDetails userDetails = authenticationService.authenticate(
+				signupRequest.getEmail(),
+				signupRequest.getPassword()
 		);
 		String tokenString = authenticationService.generateToken(userDetails);
 		AuthResponse authResponse = AuthResponse.builder()
