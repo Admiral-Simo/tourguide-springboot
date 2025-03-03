@@ -19,7 +19,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -55,15 +54,15 @@ public class Post {
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
     
     @ManyToMany
     @JoinTable(
-    		name = "post_tags",
-    		joinColumns = @JoinColumn(referencedColumnName = "post_id"),
-    		inverseJoinColumns = @JoinColumn(referencedColumnName = "tag_id")
+        name = "post_tags",
+        joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
     private Set<Tag> tags;
 
