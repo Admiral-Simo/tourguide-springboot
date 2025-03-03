@@ -1,7 +1,5 @@
 package com.atlas.tourguide.domain.dtos;
 
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class CategoryDto {
-	private UUID id;
-	private String name;
-	private long postCount;
+public class LoginRequest {
+	private String email;
+	private String password;
 }
