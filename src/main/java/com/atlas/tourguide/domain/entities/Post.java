@@ -2,6 +2,7 @@ package com.atlas.tourguide.domain.entities;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 import com.atlas.tourguide.domain.PostStatus;
@@ -15,6 +16,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -55,6 +58,14 @@ public class Post {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+    
+    @ManyToMany
+    @JoinTable(
+    		name = "post_tags",
+    		joinColumns = @JoinColumn(referencedColumnName = "post_id"),
+    		inverseJoinColumns = @JoinColumn(referencedColumnName = "tag_id")
+    )
+    private Set<Tag> tags;
 
     @Column(nullable = false)
     private Integer readingTime;
