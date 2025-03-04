@@ -8,11 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class TagResponse {
+public class AuthorDto {
 	private UUID id;
 	private String name;
-	private long postCount;
 }

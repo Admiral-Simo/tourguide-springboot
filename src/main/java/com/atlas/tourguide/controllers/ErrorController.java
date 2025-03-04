@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atlas.tourguide.domain.dtos.ApiErrorResponse;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -58,6 +59,18 @@ public class ErrorController {
 				.build();
 
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+				error
+		);
+	}
+	
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+		ApiErrorResponse error = ApiErrorResponse.builder()
+				.status(HttpStatus.NOT_FOUND.value())
+				.message("Incorrect username or password.")
+				.build();
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
 				error
 		);
 	}

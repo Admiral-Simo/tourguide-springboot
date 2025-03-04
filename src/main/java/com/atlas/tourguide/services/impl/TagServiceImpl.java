@@ -13,6 +13,7 @@ import com.atlas.tourguide.domain.entities.Tag;
 import com.atlas.tourguide.repositories.TagRepository;
 import com.atlas.tourguide.services.TagService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +24,6 @@ public class TagServiceImpl implements TagService {
 
 	@Override
 	public List<Tag> getTags() {
-		// TODO Auto-generated method stub
 		return tagRepository.findAllWithPostCount();
 	}
 
@@ -34,7 +34,6 @@ public class TagServiceImpl implements TagService {
 		Set<String> existingTagsNames = existingTags.stream()
 				.map(Tag::getName)
 				.collect(Collectors.toSet());
-		// TODO Auto-generated method stub
 		List<Tag> newTags = tagNames.stream()
 			.filter(name -> !existingTagsNames.contains(name))
 			.map(name -> Tag.builder()
@@ -53,12 +52,17 @@ public class TagServiceImpl implements TagService {
 	@Transactional
 	@Override
 	public void deleteTag(UUID id) {
-		// TODO Auto-generated method stub
 		tagRepository.findById(id).ifPresent(tag -> {
 			if (!tag.getPosts().isEmpty()) {
 				throw new IllegalStateException("Cannot delete tag with posts");
 			}
 			tagRepository.deleteById(id);
 		});
+	}
+
+	@Override
+	public Tag getTagById(UUID id) {
+		return tagRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Tag not found with id " + id));
 	}
 }
