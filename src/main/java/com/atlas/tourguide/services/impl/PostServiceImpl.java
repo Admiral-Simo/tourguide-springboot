@@ -10,6 +10,7 @@ import com.atlas.tourguide.domain.PostStatus;
 import com.atlas.tourguide.domain.entities.Category;
 import com.atlas.tourguide.domain.entities.Post;
 import com.atlas.tourguide.domain.entities.Tag;
+import com.atlas.tourguide.domain.entities.User;
 import com.atlas.tourguide.repositories.PostRepository;
 import com.atlas.tourguide.services.CategoryService;
 import com.atlas.tourguide.services.PostService;
@@ -41,6 +42,11 @@ public class PostServiceImpl implements PostService {
 			return postRepository.findAllByStatusAndTagsContaining(PostStatus.PUBLISHED, tag);
 		}
 		return postRepository.findAllByStatus(PostStatus.PUBLISHED);
+	}
+
+	@Override
+	public List<Post> getDraftPosts(User user) {
+		return postRepository.findAllByAuthorAndStatus(user, PostStatus.DRAFT);
 	}
 
 }
