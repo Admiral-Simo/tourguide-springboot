@@ -5,8 +5,10 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import com.atlas.tourguide.domain.CreatePostRequest;
+import com.atlas.tourguide.domain.UpdatePostRequest;
 import com.atlas.tourguide.domain.dtos.CreatePostRequestDto;
 import com.atlas.tourguide.domain.dtos.PostDto;
+import com.atlas.tourguide.domain.dtos.UpdatePostRequestDto;
 import com.atlas.tourguide.domain.entities.Post;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
@@ -17,4 +19,5 @@ public interface PostMapper {
 	PostDto toDto(Post post);
 	
 	CreatePostRequest toCreatePostRequest(CreatePostRequestDto dto);
+	UpdatePostRequest toUpdatePostRequest(UpdatePostRequestDto dto);
 }

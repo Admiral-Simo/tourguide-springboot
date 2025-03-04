@@ -4,14 +4,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atlas.tourguide.domain.CreatePostRequest;
+import com.atlas.tourguide.domain.UpdatePostRequest;
 import com.atlas.tourguide.domain.dtos.CreatePostRequestDto;
 import com.atlas.tourguide.domain.dtos.PostDto;
+import com.atlas.tourguide.domain.dtos.UpdatePostRequestDto;
 import com.atlas.tourguide.domain.entities.Post;
 import com.atlas.tourguide.domain.entities.User;
 import com.atlas.tourguide.mappers.PostMapper;
 import com.atlas.tourguide.services.PostService;
 import com.atlas.tourguide.services.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -24,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 
@@ -61,7 +67,7 @@ public class PostController {
 	
 	@PostMapping()
 	public ResponseEntity<PostDto> createPost(
-			@RequestBody CreatePostRequestDto createPostRequestDto,
+			@Valid @RequestBody CreatePostRequestDto createPostRequestDto,
 			@RequestAttribute UUID userId
 	) {
 		User loggedInUser = userService.getUserById(userId);
@@ -71,4 +77,18 @@ public class PostController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdPostDto);
 	}
 	
+	@PutMapping("/{id}")
+	public ResponseEntity<PostDto> updatePost(@PathVariable UUID id, @Valid @RequestBody UpdatePostRequestDto updatePostRequestDto) {
+		UpdatePostRequest updatePostRequest = postMapper.toUpdatePostRequest(updatePostRequestDto);
+		Post updatePost = postService.updatePost(id, updatePostRequest);
+		PostDto updatedPostDto = postMapper.toDto(updatePost);
+		return ResponseEntity.ok(updatedPostDto);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<PostDto> getPost(@PathVariable UUID id) {
+		Post post = postService.getPost(id);
+		PostDto postDto = postMapper.toDto(post);
+		return ResponseEntity.ok(postDto);
+	}
 }
