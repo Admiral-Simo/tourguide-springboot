@@ -75,26 +75,12 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(content, createdAt, id, readingTime, status, title, updatedAt);
-	}
+    @Column(nullable = false)
+    private Double latitude;  // Latitude of the post location
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Post other = (Post) obj;
-		return Objects.equals(content, other.content) && Objects.equals(createdAt, other.createdAt)
-				&& Objects.equals(id, other.id) && Objects.equals(readingTime, other.readingTime)
-				&& status == other.status && Objects.equals(title, other.title)
-				&& Objects.equals(updatedAt, other.updatedAt);
-	}
-
+    @Column(nullable = false)
+    private Double longitude; // Longitude of the post location
+    
     @PrePersist
     protected void onCreate() {
     	LocalDateTime now = LocalDateTime.now();
@@ -106,4 +92,27 @@ public class Post {
     protected void onUpdate() {
     	this.updatedAt = LocalDateTime.now();
     }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(author, category, content, createdAt, id, latitude, longitude, readingTime, status, tags,
+				title, updatedAt);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Post other = (Post) obj;
+		return Objects.equals(author, other.author) && Objects.equals(category, other.category)
+				&& Objects.equals(content, other.content) && Objects.equals(createdAt, other.createdAt)
+				&& Objects.equals(id, other.id) && Objects.equals(latitude, other.latitude)
+				&& Objects.equals(longitude, other.longitude) && Objects.equals(readingTime, other.readingTime)
+				&& status == other.status && Objects.equals(tags, other.tags) && Objects.equals(title, other.title)
+				&& Objects.equals(updatedAt, other.updatedAt);
+	}
 }

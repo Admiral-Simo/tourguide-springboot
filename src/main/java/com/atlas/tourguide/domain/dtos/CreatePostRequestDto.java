@@ -36,4 +36,10 @@ public class CreatePostRequestDto {
 	
 	@NotNull(message = "Status is required")
 	private PostStatus status;
+
+	@NotNull(message = "Latitude is required")
+    private Double latitude;  // Latitude of the post location
+
+	@NotNull(message = "Longitude is required")
+    private Double longitude; // Longitude of the post location
 }

@@ -36,6 +36,12 @@ public class UpdatePostRequestDto {
 	@Builder.Default
 	@Size(max = 10, message = "Maximum {max} is allowed")
 	private Set<UUID> tagIds = new HashSet<>();
+
+	@NotNull(message = "Latitude is required")
+    private Double latitude;  // Latitude of the post location
+
+	@NotNull(message = "Longitude is required")
+    private Double longitude; // Longitude of the post location
 	
 	@NotNull(message = "Status is required")
 	private PostStatus status;

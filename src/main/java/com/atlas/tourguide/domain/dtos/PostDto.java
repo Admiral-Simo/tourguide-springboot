@@ -26,5 +26,7 @@ public class PostDto {
 	private Integer readingTime;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+    private Double latitude;  // Latitude of the post location
+    private Double longitude; // Longitude of the post location
 	private PostStatus status;
 }

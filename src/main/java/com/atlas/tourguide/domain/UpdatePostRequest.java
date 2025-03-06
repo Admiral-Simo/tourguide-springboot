@@ -24,6 +24,10 @@ public class UpdatePostRequest {
 	
 	@Builder.Default
 	private Set<UUID> tagIds = new HashSet<>();
+
+    private Double latitude;  // Latitude of the post location
+
+    private Double longitude; // Longitude of the post location
 	
 	private PostStatus status;
 }	

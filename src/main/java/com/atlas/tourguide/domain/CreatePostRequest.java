@@ -25,4 +25,7 @@ public class CreatePostRequest {
 
     private PostStatus status;
 
+    private Double latitude;  // Latitude of the post location
+
+    private Double longitude; // Longitude of the post location
 }

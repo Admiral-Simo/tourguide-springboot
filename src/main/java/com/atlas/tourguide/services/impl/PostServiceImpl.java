@@ -67,6 +67,8 @@ public class PostServiceImpl implements PostService {
 		newPost.setStatus(createPostRequest.getStatus());
 		newPost.setAuthor(user);
 		newPost.setReadingTime(calculateReadingTime(postContent));
+		newPost.setLatitude(createPostRequest.getLatitude());
+		newPost.setLongitude(createPostRequest.getLongitude());
 		
 		Category category = categoryService.getCategoryById(createPostRequest.getCategoryId());
 		newPost.setCategory(category);
@@ -96,6 +98,8 @@ public class PostServiceImpl implements PostService {
 		existingPost.setContent(postContent);
 		existingPost.setStatus(updatePostRequest.getStatus());
 		existingPost.setReadingTime(calculateReadingTime(postContent));
+		existingPost.setLatitude(updatePostRequest.getLatitude());
+		existingPost.setLongitude(updatePostRequest.getLongitude());
 		
 		UUID updatePostRequestCategoryId = updatePostRequest.getCategoryId();
 		if (!existingPost.getCategory().getId().equals(updatePostRequestCategoryId)) {
