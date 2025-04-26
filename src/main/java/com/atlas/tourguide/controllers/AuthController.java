@@ -1,5 +1,7 @@
 package com.atlas.tourguide.controllers;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import com.atlas.tourguide.domain.dtos.LoginRequest;
 import com.atlas.tourguide.domain.dtos.SignupRequest;
 import com.atlas.tourguide.services.AuthenticationService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -49,6 +52,17 @@ public class AuthController {
 			.build();
 		return ResponseEntity.ok(authResponse);
 	}
+
+    @GetMapping("/user_id")
+    public ResponseEntity<UUID> getUserId(HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+
+        if (userId == null) {
+            return ResponseEntity.status(401).build(); // Unauthorized if no userId
+        }
+
+        return ResponseEntity.ok(userId);
+    }
 	
 	@GetMapping("/check")
 	public ResponseEntity<Void> isAuthenticated() {
