@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TagDto {
-	private UUID id;
-	private String name;
-	private long postCount;
+  private UUID id;
+  private String name;
+  private long postCount;
 }

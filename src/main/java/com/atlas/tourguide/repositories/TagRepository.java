@@ -12,8 +12,8 @@ import com.atlas.tourguide.domain.entities.Tag;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, UUID> {
-    @Query("SELECT c FROM Tag c LEFT JOIN FETCH c.posts")
-    List<Tag> findAllWithPostCount();
-    
-    List<Tag> findByNameIn(Set<String> names);
+  @Query("SELECT c FROM Tag c LEFT JOIN FETCH c.posts")
+  List<Tag> findAllWithPostCount();
+
+  List<Tag> findByNameIn(Set<String> names);
 }

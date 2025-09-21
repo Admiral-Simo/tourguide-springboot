@@ -16,25 +16,25 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class BlogUserDetails implements UserDetails {
-	private static final long serialVersionUID = -4322463406582004590L;
-	private final User user;
+  private static final long serialVersionUID = -4322463406582004590L;
+  private final User user;
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return List.of(new SimpleGrantedAuthority("ROLE_USER"));
-	}
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+  }
 
-	@Override
-	public String getPassword() {
-		return user.getPassword();
-	}
+  @Override
+  public String getPassword() {
+    return user.getPassword();
+  }
 
-	@Override
-	public String getUsername() {
-		return user.getEmail();
-	}
-	
-	public UUID getId() {
-		return user.getId();
-	}
+  @Override
+  public String getUsername() {
+    return user.getEmail();
+  }
+
+  public UUID getId() {
+    return user.getId();
+  }
 }

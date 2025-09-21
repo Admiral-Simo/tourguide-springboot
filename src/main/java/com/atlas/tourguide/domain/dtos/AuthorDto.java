@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class AuthorDto {
-	private UUID id;
-	private String name;
+  private UUID id;
+  private String name;
 }

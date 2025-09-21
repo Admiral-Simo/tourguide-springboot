@@ -10,6 +10,6 @@ import com.atlas.tourguide.domain.entities.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-	Optional<User> findByEmail(String email);
-	Optional<User> findById(UUID id);
+  Optional<User> findByEmail(String email);
+  Optional<User> findById(UUID id);
 }

@@ -16,16 +16,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PostDto {
-	private UUID id;
-	private String title;
-	private String content;
-	private AuthorDto author;
-	private CategoryDto category;
-	private Set<TagDto> tags;
-	private Integer readingTime;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
-    private Double latitude;  // Latitude of the post location
-    private Double longitude; // Longitude of the post location
-	private PostStatus status;
+  private UUID id;
+  private String title;
+  private String content;
+  private AuthorDto author;
+  private CategoryDto category;
+  private Set<TagDto> tags;
+  private Integer readingTime;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
+  private Double latitude; // Latitude of the post location
+  private Double longitude; // Longitude of the post location
+  private PostStatus status;
 }

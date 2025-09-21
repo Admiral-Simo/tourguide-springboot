@@ -14,17 +14,15 @@ import com.atlas.tourguide.domain.entities.Tag;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface TagMapper {
-	@Mapping(target = "postCount", source = "posts", qualifiedByName = "calculatePostCount")
-	TagDto toTagResponse(Tag tag);
+  @Mapping(target = "postCount", source = "posts", qualifiedByName = "calculatePostCount")
+  TagDto toTagResponse(Tag tag);
 
-	@Named("calculatePostCount")
-	default long calculatePostCount(Set<Post> posts) {
-		if (posts == null) {
-			return 0;
-		}
-		
-		return posts.stream()
-				.filter(post -> post.getStatus().equals(PostStatus.PUBLISHED))
-				.count();
-	}
+  @Named("calculatePostCount")
+  default long calculatePostCount(Set<Post> posts) {
+    if (posts == null) {
+      return 0;
+    }
+
+    return posts.stream().filter(post -> post.getStatus().equals(PostStatus.PUBLISHED)).count();
+  }
 }

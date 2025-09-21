@@ -23,35 +23,33 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping(path = "/api/v1/categories")
 @RequiredArgsConstructor
 public class CategoryController {
-	private final CategoryService categoryService;
-	private final CategoryMapper categoryMapper;
+  private final CategoryService categoryService;
+  private final CategoryMapper categoryMapper;
 
-	@GetMapping
-	public ResponseEntity<List<CategoryDto>> listCategories() {
-		List<CategoryDto> categories = categoryService.listCategories()
-				.stream().map(categoryMapper::toDto)
-				.toList();
-		return ResponseEntity.ok(categories);
-	}
+  @GetMapping
+  public ResponseEntity<List<CategoryDto>> listCategories() {
+    List<CategoryDto> categories = categoryService.listCategories().stream()
+        .map(categoryMapper::toDto).toList();
+    return ResponseEntity.ok(categories);
+  }
 
-	@PostMapping
-	public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
-		Category category = categoryMapper.toEntity(createCategoryRequest);
-		Category savedCategory = categoryService.createCategory(category);
-		return ResponseEntity.status(HttpStatus.CREATED).body(
-			categoryMapper.toDto(savedCategory)
-			
-		);
-	}
-	
-	@DeleteMapping(path = "/{id}")
-	public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
-		categoryService.deleteCategory(id);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+  @PostMapping
+  public ResponseEntity<CategoryDto> createCategory(
+      @Valid @RequestBody CreateCategoryRequest createCategoryRequest) {
+    Category category = categoryMapper.toEntity(createCategoryRequest);
+    Category savedCategory = categoryService.createCategory(category);
+    return ResponseEntity.status(HttpStatus.CREATED).body(categoryMapper.toDto(savedCategory)
+
+    );
+  }
+
+  @DeleteMapping(path = "/{id}")
+  public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
+    categoryService.deleteCategory(id);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }

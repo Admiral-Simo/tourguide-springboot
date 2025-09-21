@@ -14,12 +14,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-	@Override
-	public User getUserById(UUID id) {
-		return userRepository
-				.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
-	}
+  @Override
+  public User getUserById(UUID id) {
+    return userRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("User not found with id " + id));
+  }
 }

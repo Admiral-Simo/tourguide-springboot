@@ -12,16 +12,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiErrorResponse {
-	private int status;
-	private String message;
-	private List<FieldError> errors;
+  private int status;
+  private String message;
+  private List<FieldError> errors;
 
-	@Data
-	@Builder
-	@NoArgsConstructor
-	@AllArgsConstructor
-	public static class FieldError {
-		private String field;
-		private String message;
-	}
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class FieldError {
+    private String field;
+    private String message;
+  }
 }

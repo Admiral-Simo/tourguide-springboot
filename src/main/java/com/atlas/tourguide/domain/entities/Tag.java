@@ -25,31 +25,30 @@ import lombok.Setter;
 @Setter
 @Builder
 public class Tag {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+  @Column(nullable = false, unique = true)
+  private String name;
 
-    @ManyToMany(mappedBy = "tags")
-    private Set<Post> posts;
+  @ManyToMany(mappedBy = "tags")
+  private Set<Post> posts;
 
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, name);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Tag other = (Tag) obj;
-		return Objects.equals(id, other.id) && Objects.equals(name, other.name);
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Tag other = (Tag) obj;
+    return Objects.equals(id, other.id) && Objects.equals(name, other.name);
+  }
 }

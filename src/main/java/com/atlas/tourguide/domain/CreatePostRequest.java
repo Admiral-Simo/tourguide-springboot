@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreatePostRequest {
-    private String title;
+  private String title;
 
-    private String content;
+  private String content;
 
-    private UUID categoryId;
+  private UUID categoryId;
 
-    @Builder.Default
-    private Set<UUID> tagIds = new HashSet<>();
+  @Builder.Default
+  private Set<UUID> tagIds = new HashSet<>();
 
-    private PostStatus status;
+  private PostStatus status;
 
-    private Double latitude;  // Latitude of the post location
+  private Double latitude; // Latitude of the post location
 
-    private Double longitude; // Longitude of the post location
+  private Double longitude; // Longitude of the post location
 }
