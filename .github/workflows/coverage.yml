@@ -1,0 +1,28 @@
+name: Code Coverage Above (90%)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  coverage:
+    name: Check Code Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run tests and check coverage
+      # The 'verify' phase will run tests and then execute the jacoco:check goal.
+      # The pom.xml is configured to fail the build if coverage is below 90%.
+      run: mvn -B verify
