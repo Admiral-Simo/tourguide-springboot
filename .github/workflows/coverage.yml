@@ -1,4 +1,4 @@
-name: Code Coverage Above (90%)
+name: Code Coverage Above (60%)
 
 on:
   push:
