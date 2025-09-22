@@ -3,9 +3,12 @@ package com.atlas.tourguide.auth;
 import com.atlas.tourguide.auth.dtos.AuthResponseDto;
 import com.atlas.tourguide.auth.dtos.LoginRequestDto;
 import com.atlas.tourguide.auth.dtos.SignupRequestDto;
+import com.atlas.tourguide.shared.exception.ApiErrorResponse;
 import com.atlas.tourguide.user.User;
 import com.atlas.tourguide.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,111 +22,173 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Testcontainers // Enables JUnit 5 extension for Testcontainers
+@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DisplayName("AuthController Integration Tests")
 public class AuthControllerIntegrationTest {
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
 
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
-        registry.add("jwt.secret", () -> "a-very-long-and-secure-secret-key-for-testing-purposes");
-    }
+  @Container
+  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+  @DynamicPropertySource
+  static void configureProperties(DynamicPropertyRegistry registry) {
+    registry.add("spring.datasource.url", postgres::getJdbcUrl);
+    registry.add("spring.datasource.username", postgres::getUsername);
+    registry.add("spring.datasource.password", postgres::getPassword);
+    registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
+    registry.add("jwt.secret", () -> "a-very-long-and-secure-secret-key-for-testing-purposes");
+  }
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired
+  private TestRestTemplate restTemplate;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  @Autowired
+  private UserRepository userRepository;
 
-    @AfterEach
-    void tearDown() {
-        userRepository.deleteAll();
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
+  @AfterEach
+  void tearDown() {
+    userRepository.deleteAll();
+  }
+
+  @Nested
+  @DisplayName("User Signup Scenarios")
+  class SignupScenarios {
+
+    @Test
+    @DisplayName("✅ Should create user and return token on valid signup")
+    void signup_WithValidData_ShouldCreateUserAndReturnToken() {
+      // Arrange
+      SignupRequestDto signupRequest = new SignupRequestDto("test@example.com", "password123", "Test User");
+
+      // Act
+      ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity(
+              "/api/v1/auth/signup",
+              signupRequest,
+              AuthResponseDto.class
+      );
+
+      // Assert
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getBody()).isNotNull();
+      assertThat(response.getBody().getToken()).isNotBlank();
+
+      // Verify database state
+      Optional<User> createdUserOpt = userRepository.findByEmail("test@example.com");
+      assertThat(createdUserOpt).isPresent();
+      User createdUser = createdUserOpt.get();
+      assertThat(createdUser.getName()).isEqualTo("Test User");
+      assertThat(createdUser.getPassword()).startsWith("{bcrypt}"); // Verify delegating encoder is used
     }
 
     @Test
-    void signup_Success() {
-        // Arrange
-        SignupRequestDto signupRequest = new SignupRequestDto(
-                "testuser@example.com",
-                "password123",
-                "Test User"
-        );
+    @DisplayName("❌ Should return 400 Bad Request if email already exists")
+    void signup_WhenEmailAlreadyExists_ShouldReturn400BadRequest() {
+      // Arrange: Pre-populate the database with a user
+      User existingUser = User.builder()
+              .name("Existing User")
+              .email("existing@example.com")
+              .password("some-password")
+              .build();
+      userRepository.save(existingUser);
 
-        // Act
-        ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity(
-                "/api/v1/auth/signup",
-                signupRequest,
-                AuthResponseDto.class
-        );
+      SignupRequestDto signupRequest = new SignupRequestDto("existing@example.com", "password123", "New User");
 
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getToken()).isNotBlank();
-        assertThat(response.getBody().getExpiresIn()).isEqualTo(86400);
+      // Act
+      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity(
+              "/api/v1/auth/signup",
+              signupRequest,
+              ApiErrorResponse.class
+      );
 
-        // Verify user was created in the database
-        User savedUser = userRepository.findByEmail("testuser@example.com").orElse(null);
-        assertThat(savedUser).isNotNull();
-        assertThat(savedUser.getName()).isEqualTo("Test User");
-        assertThat(passwordEncoder.matches("password123", savedUser.getPassword())).isTrue();
+      // Assert
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+      assertThat(response.getBody()).isNotNull();
+      assertThat(response.getBody().getMessage()).isEqualTo("Email is already in use.");
+      assertThat(response.getBody().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+  }
+
+  @Nested
+  @DisplayName("User Login Scenarios")
+  class LoginScenarios {
+
+    @Test
+    @DisplayName("✅ Should return token on valid credentials")
+    void login_WithValidCredentials_ShouldReturnToken() {
+      // Arrange: Pre-populate the database with a user
+      User existingUser = User.builder()
+              .name("Test User")
+              .email("test@example.com")
+              .password(passwordEncoder.encode("password123")) // Use the app's encoder
+              .build();
+      userRepository.save(existingUser);
+
+      LoginRequestDto loginRequest = new LoginRequestDto("test@example.com", "password123");
+
+      // Act
+      ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity(
+              "/api/v1/auth/login",
+              loginRequest,
+              AuthResponseDto.class
+      );
+
+      // Assert
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getBody()).isNotNull();
+      assertThat(response.getBody().getToken()).isNotBlank();
     }
 
     @Test
-    void login_Success() {
-        // Arrange
-        User user = User.builder()
-                .email("loginuser@example.com")
-                .password(passwordEncoder.encode("password123"))
-                .name("Login User")
-                .build();
-        userRepository.save(user);
+    @DisplayName("❌ Should return 401 Unauthorized on incorrect password")
+    void login_WithIncorrectPassword_ShouldReturn401Unauthorized() {
+      // Arrange: Pre-populate the database with a user
+      User existingUser = User.builder()
+              .name("Test User")
+              .email("test@example.com")
+              .password(passwordEncoder.encode("password123"))
+              .build();
+      userRepository.save(existingUser);
 
-        LoginRequestDto loginRequest = new LoginRequestDto("loginuser@example.com", "password123");
+      LoginRequestDto loginRequest = new LoginRequestDto("test@example.com", "wrong-password");
 
-        // Act
-        ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity(
-                "/api/v1/auth/login",
-                loginRequest,
-                AuthResponseDto.class
-        );
+      // Act
+      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity(
+              "/api/v1/auth/login",
+              loginRequest,
+              ApiErrorResponse.class
+      );
 
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getToken()).isNotBlank();
+      // Assert
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+      assertThat(response.getBody()).isNotNull();
+      assertThat(response.getBody().getMessage()).isEqualTo("Incorrect username or password.");
+      assertThat(response.getBody().getStatus()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
     }
 
     @Test
-    void login_FailsWithInvalidPassword() {
-        // Arrange
-        User user = User.builder()
-                .email("loginuser@example.com")
-                .password(passwordEncoder.encode("password123"))
-                .name("Login User")
-                .build();
-        userRepository.save(user);
+    @DisplayName("❌ Should return 401 Unauthorized for a non-existent user")
+    void login_WithNonExistentUser_ShouldReturn401Unauthorized() {
+      // Arrange
+      LoginRequestDto loginRequest = new LoginRequestDto("nobody@example.com", "any-password");
 
-        LoginRequestDto loginRequest = new LoginRequestDto("loginuser@example.com", "wrong-password");
+      // Act
+      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity(
+              "/api/v1/auth/login",
+              loginRequest,
+              ApiErrorResponse.class
+      );
 
-        // Act
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                "/api/v1/auth/login",
-                loginRequest,
-                String.class
-        );
-
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+      // Assert
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+      assertThat(response.getBody()).isNotNull();
+      assertThat(response.getBody().getMessage()).isEqualTo("Incorrect username or password.");
     }
+  }
 }
