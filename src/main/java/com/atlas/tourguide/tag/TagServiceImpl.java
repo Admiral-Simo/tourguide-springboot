@@ -1,7 +1,6 @@
 package com.atlas.tourguide.tag;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -31,8 +30,7 @@ public class TagServiceImpl implements TagService {
     Set<String> existingTagsNames = existingTags.stream().map(Tag::getName)
         .collect(Collectors.toSet());
     List<Tag> newTags = tagNames.stream().filter(name -> !existingTagsNames.contains(name))
-        .map(name -> Tag.builder().name(name).build())
-        .collect(Collectors.toList());
+        .map(name -> Tag.builder().name(name).build()).collect(Collectors.toList());
 
     // Save new tags
     List<Tag> savedTags = new ArrayList<>();
