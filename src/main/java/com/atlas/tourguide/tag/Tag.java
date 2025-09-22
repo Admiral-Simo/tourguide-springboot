@@ -1,5 +1,6 @@
 package com.atlas.tourguide.tag;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +35,8 @@ public class Tag {
   private String name;
 
   @ManyToMany(mappedBy = "tags")
-  private Set<Post> posts;
+  @Builder.Default
+  private Set<Post> posts = new HashSet<>();
 
   @Override
   public int hashCode() {
