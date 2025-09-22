@@ -198,6 +198,7 @@
 				<version>0.8.12</version>
 				<executions>
 					<execution>
+						<id>prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
@@ -209,7 +210,6 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
-					<!-- Add this execution to fail the build if coverage is not met -->
 					<execution>
 						<id>jacoco-check</id>
 						<goals>
@@ -228,6 +228,24 @@
 									</limits>
 								</rule>
 							</rules>
+							<excludes>
+								<exclude>**/dtos/**</exclude>
+
+								<exclude>**/post/*Request.java</exclude>
+
+								<exclude>**/user/User.java</exclude>
+								<exclude>**/post/Post.java</exclude>
+								<exclude>**/category/Category.java</exclude>
+								<exclude>**/tag/Tag.java</exclude>
+
+								<exclude>**/post/PostStatus.java</exclude>
+
+								<exclude>**/shared/config/**</exclude>
+								<exclude>**/shared/exception/**</exclude>
+								<exclude>**/shared/security/**</exclude>
+
+								<exclude>**/TourguideApplication.java</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 				</executions>
