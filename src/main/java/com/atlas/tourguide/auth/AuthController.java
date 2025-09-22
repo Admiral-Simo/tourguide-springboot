@@ -3,6 +3,8 @@ package com.atlas.tourguide.auth;
 import com.atlas.tourguide.auth.dtos.AuthResponseDto;
 import com.atlas.tourguide.auth.dtos.LoginRequestDto;
 import com.atlas.tourguide.auth.dtos.SignupRequestDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,12 +31,13 @@ public class AuthController {
   }
 
   @PostMapping("/signup")
-  public AuthResponseDto signup(@RequestBody SignupRequestDto signupRequest) {
+  public ResponseEntity<AuthResponseDto> signup(@RequestBody SignupRequestDto signupRequest) {
     authenticationService.createUser(signupRequest.getEmail(), signupRequest.getPassword(),
         signupRequest.getName());
     UserDetails userDetails = authenticationService.authenticate(signupRequest.getEmail(),
         signupRequest.getPassword());
     String tokenString = authenticationService.generateToken(userDetails);
-    return AuthResponseDto.builder().token(tokenString).expiresIn(86400).build();
+    AuthResponseDto authResponseDto = AuthResponseDto.builder().token(tokenString).expiresIn(86400).build();
+    return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDto);
   }
 }

@@ -1,4 +1,4 @@
-package com.atlas.tourguide.auth;
+package com.atlas.tourguide.integration_test;
 
 import com.atlas.tourguide.auth.dtos.AuthResponseDto;
 import com.atlas.tourguide.auth.dtos.LoginRequestDto;
@@ -75,7 +75,7 @@ public class AuthControllerIntegrationTest {
       );
 
       // Assert
-      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+      assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
       assertThat(response.getBody()).isNotNull();
       assertThat(response.getBody().getToken()).isNotBlank();
 
