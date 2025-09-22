@@ -50,7 +50,7 @@ public class PostController {
     return ResponseEntity.ok(postDtos);
   }
 
-  @PostMapping()
+  @PostMapping
   public ResponseEntity<PostDto> createPost(
       @Valid @RequestBody CreatePostRequestDto createPostRequestDto,
       @RequestAttribute UUID userId) {
