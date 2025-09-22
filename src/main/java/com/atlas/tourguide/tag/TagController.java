@@ -35,7 +35,6 @@ public class TagController {
   @PostMapping
   public ResponseEntity<List<TagDto>> createTags(
       @RequestBody CreateTagsRequestDto createTagsRequestDto) {
-    // TODO: process POST request
     List<Tag> savedTags = tagService.createTags(createTagsRequestDto.getNames());
     List<TagDto> tagResponses = savedTags.stream().map(tagMapper::toTagResponse).toList();
     return ResponseEntity.status(HttpStatus.CREATED).body(tagResponses);

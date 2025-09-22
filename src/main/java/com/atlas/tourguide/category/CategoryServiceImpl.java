@@ -28,7 +28,6 @@ public class CategoryServiceImpl implements CategoryService {
     if (exists) {
       throw new IllegalArgumentException("Category already exists with name: " + name);
     }
-    // TODO Auto-generated method stub
     return categoryRepository.save(category);
   }
 

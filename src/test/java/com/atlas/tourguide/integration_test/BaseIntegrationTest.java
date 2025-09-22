@@ -12,20 +12,21 @@ import org.springframework.http.HttpHeaders;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class BaseIntegrationTest implements PostgresContainerInitializer {
 
-    @BeforeAll
-    static void start() {
-        PostgresContainerInitializer.startContainer();
-    }
+  @BeforeAll
+  static void start() {
+    PostgresContainerInitializer.startContainer();
+  }
 
-    @Autowired
-    protected TestRestTemplate restTemplate;
+  @Autowired
+  protected TestRestTemplate restTemplate;
 
-    protected HttpHeaders getAuthHeaders(String email, String password) {
-        LoginRequestDto loginRequest = new LoginRequestDto(email, password);
-        AuthResponseDto authResponse = restTemplate.postForObject("/api/v1/auth/login", loginRequest, AuthResponseDto.class);
+  protected HttpHeaders getAuthHeaders(String email, String password) {
+    LoginRequestDto loginRequest = new LoginRequestDto(email, password);
+    AuthResponseDto authResponse = restTemplate.postForObject("/api/v1/auth/login", loginRequest,
+        AuthResponseDto.class);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(authResponse.getToken());
-        return headers;
-    }
+    HttpHeaders headers = new HttpHeaders();
+    headers.setBearerAuth(authResponse.getToken());
+    return headers;
+  }
 }

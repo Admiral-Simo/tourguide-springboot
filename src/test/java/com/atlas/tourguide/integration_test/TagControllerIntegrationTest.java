@@ -27,63 +27,62 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("TagController Integration Tests")
 public class TagControllerIntegrationTest extends BaseIntegrationTest {
 
-    @Autowired private TagRepository tagRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired
+  private TagRepository tagRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
-    private HttpHeaders authHeaders;
+  private HttpHeaders authHeaders;
 
-    @BeforeEach
-    void setUp() {
-        User user = User.builder().name("Test User").email("user@example.com").password(passwordEncoder.encode("pass")).build();
-        userRepository.save(user);
-        authHeaders = getAuthHeaders("user@example.com", "pass");
-    }
+  @BeforeEach
+  void setUp() {
+    User user = User.builder().name("Test User").email("user@example.com")
+        .password(passwordEncoder.encode("pass")).build();
+    userRepository.save(user);
+    authHeaders = getAuthHeaders("user@example.com", "pass");
+  }
 
-    @AfterEach
-    void tearDown() {
-        tagRepository.deleteAll();
-        userRepository.deleteAll();
-    }
+  @AfterEach
+  void tearDown() {
+    tagRepository.deleteAll();
+    userRepository.deleteAll();
+  }
 
-    @Test
-    @DisplayName("✅ [POST /tags] Should create new tags and return all requested tags")
-    void createTags_withNewAndExistingNames_shouldSucceed() {
-        // Arrange
-        tagRepository.save(Tag.builder().name("Java").build()); // Pre-existing tag
-        CreateTagsRequestDto requestDto = new CreateTagsRequestDto(Set.of("Java", "Spring Boot", "Testcontainers"));
-        HttpEntity<CreateTagsRequestDto> requestEntity = new HttpEntity<>(requestDto, authHeaders);
+  @Test
+  @DisplayName("✅ [POST /tags] Should create new tags and return all requested tags")
+  void createTags_withNewAndExistingNames_shouldSucceed() {
+    // Arrange
+    tagRepository.save(Tag.builder().name("Java").build()); // Pre-existing tag
+    CreateTagsRequestDto requestDto = new CreateTagsRequestDto(
+        Set.of("Java", "Spring Boot", "Testcontainers"));
+    HttpEntity<CreateTagsRequestDto> requestEntity = new HttpEntity<>(requestDto, authHeaders);
 
-        // Act
-        ResponseEntity<List<TagDto>> response = restTemplate.exchange(
-                "/api/v1/tags",
-                HttpMethod.POST,
-                requestEntity,
-                new ParameterizedTypeReference<>() {}
-        );
+    // Act
+    ResponseEntity<List<TagDto>> response = restTemplate.exchange("/api/v1/tags", HttpMethod.POST,
+        requestEntity, new ParameterizedTypeReference<>() {
+        });
 
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).isNotNull().hasSize(3);
-        assertThat(tagRepository.count()).isEqualTo(3);
-    }
+    // Assert
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(response.getBody()).isNotNull().hasSize(3);
+    assertThat(tagRepository.count()).isEqualTo(3);
+  }
 
-    @Test
-    @DisplayName("❌ [POST /tags] Should return 401 Unauthorized when not authenticated")
-    void createTags_whenNotAuthenticated_shouldFail() {
-        // Arrange
-        CreateTagsRequestDto requestDto = new CreateTagsRequestDto(Set.of("Java"));
-        HttpEntity<CreateTagsRequestDto> requestEntity = new HttpEntity<>(requestDto); // No auth headers
+  @Test
+  @DisplayName("❌ [POST /tags] Should return 401 Unauthorized when not authenticated")
+  void createTags_whenNotAuthenticated_shouldFail() {
+    // Arrange
+    CreateTagsRequestDto requestDto = new CreateTagsRequestDto(Set.of("Java"));
+    HttpEntity<CreateTagsRequestDto> requestEntity = new HttpEntity<>(requestDto); // No auth
+                                                                                   // headers
 
-        // Act
-        ResponseEntity<ApiErrorResponse> response = restTemplate.exchange(
-                "/api/v1/tags",
-                HttpMethod.POST,
-                requestEntity,
-                ApiErrorResponse.class
-        );
+    // Act
+    ResponseEntity<ApiErrorResponse> response = restTemplate.exchange("/api/v1/tags",
+        HttpMethod.POST, requestEntity, ApiErrorResponse.class);
 
-        // Assert
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    }
+    // Assert
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+  }
 }

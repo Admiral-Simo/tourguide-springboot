@@ -65,14 +65,12 @@ public class AuthControllerIntegrationTest {
     @DisplayName("✅ Should create user and return token on valid signup")
     void signup_WithValidData_ShouldCreateUserAndReturnToken() {
       // Arrange
-      SignupRequestDto signupRequest = new SignupRequestDto("test@example.com", "password123", "Test User");
+      SignupRequestDto signupRequest = new SignupRequestDto("test@example.com", "password123",
+          "Test User");
 
       // Act
-      ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity(
-              "/api/v1/auth/signup",
-              signupRequest,
-              AuthResponseDto.class
-      );
+      ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity("/api/v1/auth/signup",
+          signupRequest, AuthResponseDto.class);
 
       // Assert
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -84,28 +82,24 @@ public class AuthControllerIntegrationTest {
       assertThat(createdUserOpt).isPresent();
       User createdUser = createdUserOpt.get();
       assertThat(createdUser.getName()).isEqualTo("Test User");
-      assertThat(createdUser.getPassword()).startsWith("{bcrypt}"); // Verify delegating encoder is used
+      assertThat(createdUser.getPassword()).startsWith("{bcrypt}"); // Verify delegating encoder is
+                                                                    // used
     }
 
     @Test
     @DisplayName("❌ Should return 400 Bad Request if email already exists")
     void signup_WhenEmailAlreadyExists_ShouldReturn400BadRequest() {
       // Arrange: Pre-populate the database with a user
-      User existingUser = User.builder()
-              .name("Existing User")
-              .email("existing@example.com")
-              .password("some-password")
-              .build();
+      User existingUser = User.builder().name("Existing User").email("existing@example.com")
+          .password("some-password").build();
       userRepository.save(existingUser);
 
-      SignupRequestDto signupRequest = new SignupRequestDto("existing@example.com", "password123", "New User");
+      SignupRequestDto signupRequest = new SignupRequestDto("existing@example.com", "password123",
+          "New User");
 
       // Act
-      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity(
-              "/api/v1/auth/signup",
-              signupRequest,
-              ApiErrorResponse.class
-      );
+      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity("/api/v1/auth/signup",
+          signupRequest, ApiErrorResponse.class);
 
       // Assert
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -123,21 +117,16 @@ public class AuthControllerIntegrationTest {
     @DisplayName("✅ Should return token on valid credentials")
     void login_WithValidCredentials_ShouldReturnToken() {
       // Arrange: Pre-populate the database with a user
-      User existingUser = User.builder()
-              .name("Test User")
-              .email("test@example.com")
-              .password(passwordEncoder.encode("password123")) // Use the app's encoder
-              .build();
+      User existingUser = User.builder().name("Test User").email("test@example.com")
+          .password(passwordEncoder.encode("password123")) // Use the app's encoder
+          .build();
       userRepository.save(existingUser);
 
       LoginRequestDto loginRequest = new LoginRequestDto("test@example.com", "password123");
 
       // Act
-      ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity(
-              "/api/v1/auth/login",
-              loginRequest,
-              AuthResponseDto.class
-      );
+      ResponseEntity<AuthResponseDto> response = restTemplate.postForEntity("/api/v1/auth/login",
+          loginRequest, AuthResponseDto.class);
 
       // Assert
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -149,21 +138,15 @@ public class AuthControllerIntegrationTest {
     @DisplayName("❌ Should return 401 Unauthorized on incorrect password")
     void login_WithIncorrectPassword_ShouldReturn401Unauthorized() {
       // Arrange: Pre-populate the database with a user
-      User existingUser = User.builder()
-              .name("Test User")
-              .email("test@example.com")
-              .password(passwordEncoder.encode("password123"))
-              .build();
+      User existingUser = User.builder().name("Test User").email("test@example.com")
+          .password(passwordEncoder.encode("password123")).build();
       userRepository.save(existingUser);
 
       LoginRequestDto loginRequest = new LoginRequestDto("test@example.com", "wrong-password");
 
       // Act
-      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity(
-              "/api/v1/auth/login",
-              loginRequest,
-              ApiErrorResponse.class
-      );
+      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity("/api/v1/auth/login",
+          loginRequest, ApiErrorResponse.class);
 
       // Assert
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
@@ -179,11 +162,8 @@ public class AuthControllerIntegrationTest {
       LoginRequestDto loginRequest = new LoginRequestDto("nobody@example.com", "any-password");
 
       // Act
-      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity(
-              "/api/v1/auth/login",
-              loginRequest,
-              ApiErrorResponse.class
-      );
+      ResponseEntity<ApiErrorResponse> response = restTemplate.postForEntity("/api/v1/auth/login",
+          loginRequest, ApiErrorResponse.class);
 
       // Assert
       assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);

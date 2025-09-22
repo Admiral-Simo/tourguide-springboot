@@ -37,7 +37,8 @@ public class AuthController {
     UserDetails userDetails = authenticationService.authenticate(signupRequest.getEmail(),
         signupRequest.getPassword());
     String tokenString = authenticationService.generateToken(userDetails);
-    AuthResponseDto authResponseDto = AuthResponseDto.builder().token(tokenString).expiresIn(86400).build();
+    AuthResponseDto authResponseDto = AuthResponseDto.builder().token(tokenString).expiresIn(86400)
+        .build();
     return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDto);
   }
 }
