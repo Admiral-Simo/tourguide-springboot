@@ -2,7 +2,7 @@
 
 ## 📝 Overview
 
-Atlas is not just a blogging platform—it’s a geographical narrative engine that allows travelers, locals, and explorers to anchor their stories to specific territories. Our application bridges personal experiences with geographical context, transforming how we share and discover local narratives.
+Atlas is not just a blogging platform—it’s a geographical narrative engine that allows travelers, locals, and explorers to anchor their stories to specific territories. Our application bridges personal experiences with geographical context, transforming how we share and discover local narratives
 
 ## 🛠 Tech Stack
 

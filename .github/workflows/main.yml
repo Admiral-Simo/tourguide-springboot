@@ -54,8 +54,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+            rm -rf ~/tourguide-springboot
+            git clone https://github.com/Admiral-Simo/tourguide-springboot
             cd ~/tourguide-springboot
-
-            git pull origin main
-
-            docker compose up --build -d
+            docker-compose up --build -d
