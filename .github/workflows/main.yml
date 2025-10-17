@@ -54,7 +54,28 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            rm -rf ~/tourguide-springboot
-            git clone https://github.com/Admiral-Simo/tourguide-springboot
+            echo "Starting deployment on EC2..."
+
+            cd ~
+            if [ ! -d "tourguide-springboot" ]; then
+              echo "Repository not found. Cloning..."
+              git clone https://github.com/Admiral-Simo/tourguide-springboot
+            else
+              echo "Repository exists. Pulling latest changes..."
+              cd tourguide-springboot
+              git pull origin main
+            fi
+
             cd ~/tourguide-springboot
+
+            echo "Checking for existing Docker container..."
+            if [ "$(docker ps -a -q -f name=tourguide)" ]; then
+              echo "Existing container found. Replacing it..."
+              docker stop tourguide || true
+              docker rm tourguide || true
+            fi
+
+            echo "Building and running new container..."
             docker-compose up --build -d
+
+            echo "Deployment complete!"
